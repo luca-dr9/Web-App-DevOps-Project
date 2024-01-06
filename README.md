@@ -45,6 +45,42 @@ To run the application, you simply need to run the `app.py` script in this repos
 
 2. **Add New Order Page:** Click on the "Add New Order" tab to access the order form. Complete all required fields and ensure that your entries meet the specified criteria.
 
+## Roadmap
+
+### Adding Delivery Date
+
+ Made a branch that adds a delivery date column. Feature was reverted, but could be used in future by merging feature branch.
+
+### Dockerfile
+
+- **Creating Dockerfile:**
+Uses python:3.8-slim as parent image. Sets working directory to /app then copies the application files in the container. Installs system dependecies and ODBC driver. Installs ppip and setuptools. installs python packages specified in requirements.txt. Exposes port 5000. Defines startup command, CMD ["python", "app.py"]
+
+- **Docker Hub:**
+Pushed to Docker Hub with tag: [lucadr9/luca-devops-image](https://hub.docker.com/r/lucadr9/luca-devops-image)
+
+## AKS Terraform
+
+Deploying the containerised application onto a Kubernetes cluster to ensure application scalability. To achieve this, I've implemeted infrastructure as code using Terraform.
+
+First, I created the Terraform project directory, aks-terraform. Then inside created two module directories: networking-module and aks-cluster-module. One for provisioning the necessary Azure Networking Services for an AKS cluster and one for provisioning the Kubernetes cluster itself.
+
+### Networking Module
+
+- **Variables:** "resource_group_name" variable that represents the name of the Azure Resource Group where the networking resources will be deployed in. "location" variable that specifies the Azure region where the networking resources will be deployed to. "vnet_address_space" variable that specifies the address space for the Virtual Network (VNet).
+
+- **Main:** "azurerm_resource_group.example" resource for the Azure Resource Group."azurerm_virtual_network.example" resource for the Virtual Network. "azurerm_subnet.control-sub" resource for the Control Plane Subnet. "azurerm_subnet.worker-sub" resource for the Worker Node Subnet. "azurerm_network_security_group.example" resource for the Network Security Group that includes 2 inbound rules: one to allow traffic to the kube-apiserver (named kube-apiserver-rule) and one to allow inbound SSH traffic (named ssh-rule).
+
+- **Output:** "vnet_id", "control_plane_subnet_id" and "worker_node_subnet_id" variables store the ID of the Vnet, control plane subnet and worker node subnet, respectively. "networking_resource_group_name" variable that will provide the name of the Azure Resource Group. "aks_nsg_id" variable will store the ID of the Network Security Group (NSG).
+
+### AKS Cluster Module
+
+- **Variables:** "aks_cluster_name" variable for the name of the AKS cluster. "cluster_location" variable for the Azure region where the AKS cluster will be deployed to. "dns_prefix" variable for the DNS prefix of cluster. "kubernetes_version" variable that specifies which Kubernetes version the cluster will use. "service_principle_client_id" variable that provides the Client ID for the serivce principle associated with the cluster. "service_principle_secret" variable that supplies the CLient Secret Secret for the service principle. Also includes these output variables from the networking module as input variables: "resource_group_name", "vnet_id", "control_plane_subnet_id" and "worker_node_subnet_id".
+
+- **Main:** "azurerm_kubernetes_cluster.aks_cluster" resource for an Azure Kubernetes Service (AKS) cluster with specified configuration, including a default node pool and a serice principle for authentication.
+
+- **Output:** "aks_cluster_name" variable to store the name of the provisioned cluster. "aks_cluster_id" variable for the ID of the cluster. "aks_kubeconfig" variable that will capture the Kubernetes configuration file fo the cluster.
+
 ## Technology Stack
 
 - **Backend:** Flask is used to build the backend of the application, handling routing, data processing, and interactions with the database.
@@ -55,7 +91,9 @@ To run the application, you simply need to run the `app.py` script in this repos
 
 ## Contributors 
 
-- [Maya Iuga]([https://github.com/yourusername](https://github.com/maya-a-iuga))
+- [Maya Iuga](https://github.com/maya-a-iuga)
+- [Luca Di Rienzo](https://github.com/luca-dr9) - luca.direnzo9@gmail.com
+- [Project Link](https://github.com/luca-dr9/Web-App-DevOps-Project)
 
 ## License
 
