@@ -1,1 +1,5 @@
 **/.terraform/
+
+# add these just in case I "terraform apply"
+**/*.tfstate
+**/*.tfstate.backup
