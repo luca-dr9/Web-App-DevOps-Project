@@ -15,11 +15,9 @@ variable "subscription_id" {
   type        = string
   sensitive   = true
 }
-}
 
 variable "tenant_id" {
   description = "Tenant ID for the provider"
   type        = string
   sensitive   = true
-}
 }
