@@ -67,25 +67,83 @@ First, I created the Terraform project directory, aks-terraform. Then inside cre
 
 ### Networking Module
 
-- **Variables:** "resource_group_name" variable that represents the name of the Azure Resource Group where the networking resources will be deployed in. "location" variable that specifies the Azure region where the networking resources will be deployed to. "vnet_address_space" variable that specifies the address space for the Virtual Network (VNet).
+**Variables:** 
+- "resource_group_name" variable that represents the name of the Azure Resource Group where the networking resources will be deployed in. 
+- "location" variable that specifies the Azure region where the networking resources will be deployed to. 
+- "vnet_address_space" variable that specifies the address space for the Virtual Network (VNet).
 
-- **Main:** "azurerm_resource_group.example" resource for the Azure Resource Group."azurerm_virtual_network.example" resource for the Virtual Network. "azurerm_subnet.control-sub" resource for the Control Plane Subnet. "azurerm_subnet.worker-sub" resource for the Worker Node Subnet. "azurerm_network_security_group.example" resource for the Network Security Group that includes 2 inbound rules: one to allow traffic to the kube-apiserver (named kube-apiserver-rule) and one to allow inbound SSH traffic (named ssh-rule).
+**Main:** 
+- "azurerm_resource_group.example" resource for the Azure Resource Group.
+- "azurerm_virtual_network.example" resource for the Virtual Network. 
+- "azurerm_subnet.control-sub" resource for the Control Plane Subnet. 
+- "azurerm_subnet.worker-sub" resource for the Worker Node Subnet. 
+- "azurerm_network_security_group.example" resource for the Network Security Group that includes 2 inbound rules: one to allow traffic to the kube-apiserver (named kube-apiserver-rule) and one to allow inbound SSH traffic (named ssh-rule).
 
-- **Output:** "vnet_id", "control_plane_subnet_id" and "worker_node_subnet_id" variables store the ID of the Vnet, control plane subnet and worker node subnet, respectively. "networking_resource_group_name" variable that will provide the name of the Azure Resource Group. "aks_nsg_id" variable will store the ID of the Network Security Group (NSG).
+**Output:** 
+- "vnet_id", "control_plane_subnet_id" and "worker_node_subnet_id" variables store the ID of the Vnet, control plane subnet and worker node subnet, respectively. 
+- "networking_resource_group_name" variable that will provide the name of the Azure Resource Group. 
+- "aks_nsg_id" variable will store the ID of the Network Security Group (NSG).
 
 ### AKS Cluster Module
 
-- **Variables:** "aks_cluster_name" variable for the name of the AKS cluster. "cluster_location" variable for the Azure region where the AKS cluster will be deployed to. "dns_prefix" variable for the DNS prefix of cluster. "kubernetes_version" variable that specifies which Kubernetes version the cluster will use. "service_principle_client_id" variable that provides the Client ID for the serivce principle associated with the cluster. "service_principle_secret" variable that supplies the CLient Secret Secret for the service principle. Also includes these output variables from the networking module as input variables: "resource_group_name", "vnet_id", "control_plane_subnet_id" and "worker_node_subnet_id".
+**Variables:** 
+- "aks_cluster_name" variable for the name of the AKS cluster. 
+- "cluster_location" variable for the Azure region where the AKS cluster will be deployed to. 
+- "dns_prefix" variable for the DNS prefix of cluster. 
+- "kubernetes_version" variable that specifies which Kubernetes version the cluster will use. 
+- "service_principle_client_id" variable that provides the Client ID for the serivce principle associated with the cluster. 
+- "service_principle_secret" variable that supplies the CLient Secret Secret for the service principle. 
+- Also includes these output variables from the networking module as input variables: "resource_group_name", "vnet_id", "control_plane_subnet_id" and "worker_node_subnet_id".
 
-- **Main:** "azurerm_kubernetes_cluster.aks_cluster" resource for an Azure Kubernetes Service (AKS) cluster with specified configuration, including a default node pool and a serice principle for authentication.
+**Main:**
+ - "azurerm_kubernetes_cluster.aks_cluster" resource for an Azure Kubernetes Service (AKS) cluster with specified configuration, including a default node pool and a serice principle for authentication.
 
-- **Output:** "aks_cluster_name" variable to store the name of the provisioned cluster. "aks_cluster_id" variable for the ID of the cluster. "aks_kubeconfig" variable that will capture the Kubernetes configuration file fo the cluster.
+**Output:**
+ - "aks_cluster_name" variable to store the name of the provisioned cluster. 
+ - "aks_cluster_id" variable for the ID of the cluster. 
+ - "aks_kubeconfig" variable that will capture the Kubernetes configuration file fo the cluster.
 
 ### AKS Terraform Main Directory
 
-- **Variables:** "client_id" and "client_secret" variables to prevent exposing credentials.
+**Variables:** 
 
-- **Main:** First added the Azure provider block to enable authentication to Azure using service principal credentials. Integrated the Netowrking Module using input variable. Integrated the Cluster Module using input varaibles and the output variables from the Networking Module.
+"subscription_id", "tenant_id", "client_id" and "client_secret" only environment variables to prevent exposing credentials.
+
+**Main:** 
+
+First added the Azure provider block to enable authentication to Azure using service principal credentials. Integrated the Netowrking Module using input variable. Integrated the Cluster Module using input varaibles and the output variables from the Networking Module.
+
+## Kubernetes Deployment
+
+### Deployment Manifest
+
+- Deployment named "flask-app-deployment", with 2 replicas.
+
+- App and pod template are labled "app: flask-app".
+
+- Container called "flask-app-container" with image from DockerHub "lucadr9/luca-devops-image" and exposes port 5000.
+
+- Rolling Update Stategy to facilitate seamless application updates, during updates, a maximum of one pod deploys while one pod becomes temporarily unavailable, maintaining application availability.
+
+### Service Manifest
+
+- Service named "flask-app-service" with label "app: flask-app".
+
+- Uses TCP protocol on port 80, with tagetPort set to 5000, corresponding to the exposed port.
+
+- Service type is set to ClusterIP
+
+### Deployment Strategy
+
+The Rolling Updates deployment strategy has been chosen to ensure a smooth deployment process with minimal disruption. This strategy allows for gradual updates, minimizing downtime by deploying one pod at a time while keeping the application available.
+
+### Testing and Validation
+
+- Used "kubectl get pods" to ensure that all pods are in the "Running" state
+
+- Used "kubectl get services" to ensure service is created with type ClusterIP
+
+- Checked logs and events with "kubectl logs" and more info with "kubectl describe pods" to make sure there arre no errors/issues.
 
 ## Technology Stack
 
