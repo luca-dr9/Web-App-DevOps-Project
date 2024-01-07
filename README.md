@@ -81,6 +81,12 @@ First, I created the Terraform project directory, aks-terraform. Then inside cre
 
 - **Output:** "aks_cluster_name" variable to store the name of the provisioned cluster. "aks_cluster_id" variable for the ID of the cluster. "aks_kubeconfig" variable that will capture the Kubernetes configuration file fo the cluster.
 
+### AKS Terraform Main Directory
+
+- **Variables:** "client_id" and "client_secret" variables to prevent exposing credentials.
+
+- **Main:** First added the Azure provider block to enable authentication to Azure using service principal credentials. Integrated the Netowrking Module using input variable. Integrated the Cluster Module using input varaibles and the output variables from the Networking Module.
+
 ## Technology Stack
 
 - **Backend:** Flask is used to build the backend of the application, handling routing, data processing, and interactions with the database.
