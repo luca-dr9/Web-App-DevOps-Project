@@ -18,12 +18,12 @@ variable "kubernetes_version" {
     type        = string
 }
 
-variable "service_principle_client_id" {
+variable "service_principal_client_id" {
     description = "The Client ID for the service principal associated with the cluster"
     type        = string
 }
 
-variable "service_principle_secret" {
+variable "service_principal_secret" {
     description = "The Client Secret for the service principal"
     type        = string
 }
@@ -39,7 +39,7 @@ variable "vnet_id" {
     type        = string
 }
 
-variable "control_panel_subnet_id" {
+variable "control_plane_subnet_id" {
     description = "The ID of the control plane subnet within the VNet"
     type        = string
 }

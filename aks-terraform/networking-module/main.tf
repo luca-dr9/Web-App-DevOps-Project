@@ -37,7 +37,7 @@ resource "azurerm_network_security_group" "example" {
         protocol = "Tcp"
         source_port_range = "*"
         destination_port_range = 6443
-        source_address_range = "77.101.194.237"
+        source_address_prefix = "77.101.194.237"
         destination_address_prefix = "*"
     }
 
@@ -49,7 +49,7 @@ resource "azurerm_network_security_group" "example" {
         protocol = "Tcp"
         source_port_range = "*"
         destination_port_range = 22
-        source_address_range = "77.101.194.237"
+        source_address_prefix = "77.101.194.237"
         destination_address_prefix = "*"
     }
 }
