@@ -15,8 +15,6 @@ steps:
 - task: KubernetesManifest@1
   inputs:
     action: 'deploy'
-    connectionType: 'azureResourceManager'
-    azureSubscriptionConnection: 'Luca Di Rienzo DevOps(59a754b8-99d8-4941-a9c1-684186c61531)'
-    azureResourceGroup: 'networking-resource_group'
-    kubernetesCluster: 'terraform-aks-cluster'
+    connectionType: 'kubernetesServiceConnection'
+    kubernetesServiceConnection: 'lucadr9-aks-service-connection'
     manifests: 'application-manifest.yaml'
