@@ -10,5 +10,5 @@ steps:
     containerRegistry: 'lucadr9-dockerhub-service-connection'
     repository: 'lucadr9/luca-devops-image'
     command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
+    Dockerfile: '**/dockerfile'
     tags: 'latest'
