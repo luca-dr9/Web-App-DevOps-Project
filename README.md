@@ -145,6 +145,68 @@ The Rolling Updates deployment strategy has been chosen to ensure a smooth deplo
 
 - Checked logs and events with "kubectl logs" and more info with "kubectl describe pods" to make sure there arre no errors/issues.
 
+## CI/CD Pipeline with Azure DevOps
+
+- The source repository is main and the pipeline is triggered when changes are made to the main branch.
+
+- The build pipeline uses docker task to build and push the Docker image to Docker Hub.
+
+- The release pipeline deploys the application to AKS using Kubernetes Manifest task.
+
+### Validation Steps:
+
+- Check build pipeline by going on Docker Hub and checking if it has been push recently.
+
+- Check the release pipeline by using 'kubectl pods' or 'kubectl logs' to make sure they are running and no errors occured.
+
+## AKS Cluster Monitoring
+
+### Metric Explorer Charts
+
+- Average Node CPU Usage: This chart allows you to track the CPU usage of your AKS cluster's nodes. Monitoring CPU usage helps ensure efficient resource allocation and detect potential performance issues.
+
+- Average Pod Count: This chart displays the average number of pods running in your AKS cluster. It's a key metric for evaluating the cluster's capacity and workload distribution.
+
+- Used Disk Percentage: Monitoring disk usage is critical to prevent storage-related issues. This chart helps you track how much disk space is being utilized.
+
+- Bytes Read and Written per Second: Monitoring data I/O is crucial for identifying potential performance bottlenecks. This chart provides insights into data transfer rates.
+
+### Log Analytics
+
+- Average Node CPU Usage Percentage per Minute: This configuration captures data on node-level usage at a granular level, with logs recorded per minute
+
+- Average Node Memory Usage Percentage per Minute: Similar to CPU usage, tracking memory usage at node level allows you to detect memory-related performance concerns and efficiently allocate resources
+
+- Pods Counts with Phase: This log configuration provides information on the count of pods with different phases, such as Pending, Running, or Terminating. It offers insights into pod lifecycle management and helps ensure the cluster's workload is appropriately distributed.
+
+- Find Warning Value in Container Logs: By configuring Log Analytics to search for warning values in container logs, you proactively detect issues or errors within your containers, allowing for prompt troubleshooting and issues resolution
+
+- Monitoring Kubernetes Events: Monitoring Kubernetes events, such as pod scheduling, scaling activities, and errors, is essential for tracking the overall health and stability of the cluster
+
+### Alarms
+
+- Used Disk Percentage: Alarm triggers if AKS cluster exceeds 90%. This alert is vital because it helps you proactively detect and address potential disk issues that could lead to performance degradation and service interruptions. The alert checks every 5 minutes and has a loopback period of 15 minutes. If triggered, should increase disk capacity or optimise usage.
+
+- CPU Usage Percentage: Alarm triggers if AKS cluster exceeds 80%. The alert checks every 1 minute and has a loopback period of 5 minutes. If triggered, check resource using most, then optimise.
+
+- Memory Working Set Percentage: Alarm triggers if AKS cluster exceeds 80%. The alert checks every 1 minute and has a loopback period of 5 minutes. If triggered, optimise memory usage.
+
+- The alerts are configured to send notfications to email.
+
+## Azure Key Vault for Secret Management
+
+- Azure Key Vault Setup: First had to create the Azure Key Vault then assign RBAC Roles in Key Vault. I assigned myself as Key Vault Administator, so I have full access.
+
+- Secrets Stored: I created the secrets: Database-Name, Server-Name, Server-Username and Server-Password. These were all used to make the database connection in the application code without hardcoding the values.
+
+- AKS Integration: Created a user-assigned Managed Identity then assigned it the role, Key Vault Secrets Officer. Therefore it could access the secrets in the Key Vault.
+
+- Application Code Modifications: Set up Azure Key Vault client with Managed Identity, then accessed the secret vaules from the Key Vault, finally assigned those values to the already used variables (instead of hardcoding the secrets values).
+
+## DevOps Pipeline Architecture
+
+![DevOps Pipeline Architecture](https://github.com/luca-dr9/Web-App-DevOps-Project/assets/148899235/e78cfe0a-2929-4f6f-8e55-9ea850c10c9f)
+
 ## Technology Stack
 
 - **Backend:** Flask is used to build the backend of the application, handling routing, data processing, and interactions with the database.
